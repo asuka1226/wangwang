@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>welcome to my personal website</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            background-color: #171717;
+            color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 加载动画样式 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: 1s ease;
+        }
+
+        .loading-screen svg {
+            width: 5rem;
+            margin-bottom: 2rem;
+            overflow: visible;
+            transition: 0.3s ease;
+        }
+
+        .loading-screen svg circle {
+            fill: none;
+            stroke: #171717;
+            stroke-width: 12;
+            stroke-dasharray: 160;
+            stroke-dashoffset: 160;
+            transform-origin: center;
+            animation: circle_rotate 3s ease-in infinite;
+        }
+
+        @keyframes circle_rotate {
+            0% {
+                transform: rotate(0deg);
+                stroke-dashoffset: 160;
+            }
+
+            100% {
+                transform: rotate(360deg);
+                stroke-dashoffset: -160;
+            }
+        }
+
+        .loading-screen p {
+            font-family: sans-serif;
+            font-size: 2rem;
+            color: #171717;
+            font-weight: 900;
+            transition: 0.3s ease;
+        }
+
+        .loading_out {
+            transform: translateY(100%);
+        }
+
+        .loading_out svg,
+        .loading_out p {
+            opacity: 0;
+        }
+
+        /* 磁吸小球容器 */
+        .magnetic-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.3;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: rgba(23, 23, 23, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Impact', sans-serif;
+            font-size: 2rem;
+            color: #17f700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #f7f7f7;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #17f700;
+        }
+
+        /* 英雄区域样式 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #17f700;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #17f700;
+            color: #171717;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            cursor: pointer;
+            pointer-events: all;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            background-color: #13d400;
+        }
+
+        /* 水平滚动区域样式 */
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin: 5rem 0 3rem;
+            color: #17f700;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .wapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10rem;
+        }
+
+        .container {
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background-color: #171717;
+            overflow: hidden;
+        }
+
+        .cardsbox {
+            display: flex;
+            padding: 0 10vw;
+        }
+
+        .cardsbox_card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 70vmin;
+            height: 50vmin;
+            background-color: #f7f7f7;
+            margin-right: 10vmin;
+            color: #171717;
+            flex-shrink: 0;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .cardsbox_card:hover {
+            transform: translateY(-10px);
+        }
+
+        .cardsbox_card h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .cardsbox_card p {
+            font-size: 1.2rem;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* 关于我区域样式 */
+        .about {
+            padding: 5rem 10vw;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            height: 500px;
+            background-color: #17f700;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            color: #171717;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .about-content {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+        }
+
+        .about-content h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #17f700;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 技能条样式 */
+        .skills-container {
+            margin-top: 2rem;
+        }
+
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-name {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background-color: #17f700;
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s ease-in-out;
+        }
+
+        /* 联系区域样式 */
+        .contact {
+            padding: 5rem 10vw;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #17f700;
+            font-family: 'Impact', sans-serif;
+        }
+
+        .contact p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #17f700;
+            color: #171717;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            background-color: #13d400;
+        }
+
+        /* 页脚样式 */
+        footer {
+            padding: 3rem 10vw;
+            text-align: center;
+            background-color: #0f0f0f;
+            margin-top: 5rem;
+        }
+
+        footer p {
+            font-size: 1rem;
+            color: #888;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .cardsbox_card {
+                width: 80vw;
+                height: 60vw;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .nav-links a {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 加载动画 -->
+    <div class="loading-screen" id="loadingScreen">
+        <svg viewbox='0 0 50 50'>
+            <circle r='25' cx='25' cy='25'></circle>
+        </svg>
+        <p>LOADING</p>
+    </div>
+
+    <!-- 磁吸小球效果 -->
+    <svg class="magnetic-container" id="magneticContainer"></svg>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo" id="pageLogo">PORTFOLIO</div>
+        <div class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#projects">作品</a>
+            <a href="#about">关于</a>
+            <a href="#contact">联系</a>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main>
+        <!-- 英雄区域 -->
+        <section class="hero" id="home">
+            <h1>Hello my name is Linchangheng</h1>
+            <p>专注于创造独特、引人入胜的数字体验，融合前沿技术与艺术设计。</p>
+            <a href="#projects" class="cta-button">learn more</a>
+        </section>
+
+        <!-- 水平滚动区域 -->
+        <h2 class="section-title" id="projects">介绍</h2>
+        <div class="wapper">
+            <div class="container">
+                <div class="cardsbox">
+                    <div class="cardsbox_card">
+                        <h3>对未来的学业规划</h3>
+                        <p>我计划在未来的学业中，深入研究前端开发和用户体验设计，力求在这两个领域达到更高的水平。目前主要还是努力学习高数和c语言。</p>
+                    </div>
+                    <div class="cardsbox_card">
+                        <h3>优缺点</h3>
+                        <p>优点：乐于学习新知识，具备良好的逻辑思维能力；缺点：拥有超级无敌拖延症。</p>
+                    </div>
+                    <div class="cardsbox_card">
+                        <h3>个人兴趣</h3>
+                        <p>编程方面：目前对前端开发和用户体验设计非常感兴趣，喜欢尝试各种新技术和工具。
+                            除了编程之外：弹吉他，玩游戏....
+                        </p>
+                    </div>
+                    <div class="cardsbox_card">
+                        <h3>周末时间安排</h3>
+                        <p>先睡个好觉，然后学高数和C语言，提高自我代码编写能力。累了就玩游戏☺️</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于我区域 -->
+        <section class="about" id="about">
+            <div class="about-image">
+                <span>关于我</span>
+            </div>
+            <div class="about-content">
+                <h2>关于我</h2>
+                <p>我是一名充满热情的前端开发者和创意设计师，拥有0行业经验。我专注于创造独特的数字体验，将前沿技术与艺术设计完美融合。</p>
+                <p>我的技能包括HTML5、CSS3、JavaScript、React、Vue.js、GSAP动画库等（全都只懂0.1%）。我热衷于探索新的技术和设计趋势，并将其应用于实际项目中。</p>
+                
+                <div class="skills-container">
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>HTML5/CSS3</span>
+                            <span>0.5%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="95"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>JavaScript</span>
+                            <span>0.9%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="90"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name"></div>
+                            <span>React</span>
+                            <span>0.85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="85"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Vue.js</span>
+                            <span>0.8%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="80"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>UI/UX设计</span>
+                            <span>0.75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="75"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系区域 -->
+        <section class="contact" id="contact">
+            <h2>联系我</h2>
+            <p>如果您对我的作品感兴趣，或者有项目合作的想法，请随时与我联系。我期待与您合作，共同创造出色的数字体验。</p>
+            <div class="social-links">
+                <a href="mailto:example@email.com">发送邮件</a>
+                <a href="https://github.com/asuka1226/asuka" target="_blank">GitHub</a>
+                <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 asuka 保留所有权利.</p>
+    </footer>
+
+    <script>
+        // 加载动画
+        const loading = {
+            container: document.querySelector(".loading-screen"),
+            out() {
+                this.container.classList.add("loading_out");
+                setTimeout(() => {
+                    this.container.style.display = "none";
+                }, 1000);
+            }
+        };
+
+        // 磁吸小球效果
+        const magnetic = {
+            container: document.getElementById("magneticContainer"),
+            width: 0,
+            height: 0,
+            left: 0,
+            top: 0,
+            lines: 8,
+            rows: 8,
+            balls: [],
+            mouse_radius: 180,
+            init() {
+                this.resize();
+                this.create_yoyo(20);
+                document.addEventListener("mousemove", (e) => {
+                    this.move_balls(e.x, e.y);
+                });
+                window.addEventListener("resize", this.resize.bind(this));
+            },
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.left = 0;
+                this.top = 0;
+                
+                // 更新SVG尺寸
+                this.container.setAttribute("width", this.width);
+                this.container.setAttribute("height", this.height);
+                this.container.setAttribute("viewBox", `0 0 ${this.width} ${this.height}`);
+                
+                // 重新创建小球
+                this.clearBalls();
+                this.create_yoyo(20);
+            },
+            clearBalls() {
+                while (this.container.firstChild) {
+                    this.container.removeChild(this.container.firstChild);
+                }
+                this.balls = [];
+            },
+            create_yoyo(radius) {
+                for (let r = 0; r <= this.rows; r++) {
+                    for (let l = 0; l <= this.lines; l++) {
+                        let x = this.width / this.lines * l;
+                        let y = this.height / this.rows * r;
+                        const ball = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        ball.setAttribute("fill", "#17f700");
+                        ball.setAttribute("cx", x);
+                        ball.setAttribute("cy", y);
+                        ball.setAttribute("r", radius);
+                        const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        point.setAttribute("fill", "#f7f7f7");
+                        point.setAttribute("cx", x);
+                        point.setAttribute("cy", y);
+                        point.setAttribute("r", radius / 5);
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("x1", x);
+                        line.setAttribute("y1", y);
+                        line.setAttribute("x2", x);
+                        line.setAttribute("y2", y);
+                        line.setAttribute("stroke", "#f7f7f7");
+                        line.setAttribute("stroke-width", "2");
+                        this.container.appendChild(line);
+                        this.container.appendChild(point);
+                        this.container.appendChild(ball);
+                        ball.line = line;
+                        ball.ori_x = x;
+                        ball.ori_y = y;
+                        this.balls.push(ball);
+                    }
+                }
+            },
+            move_balls(x, y) {
+                this.balls.forEach(ball => {
+                    const mouse_x = x - this.left;
+                    const mouse_y = y - this.top;
+                    const dx = ball.ori_x - mouse_x;
+                    const dy = ball.ori_y - mouse_y;
+                    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+                    if (distance <= this.mouse_radius) {
+                        ball.move_x = mouse_x + dx / distance * this.mouse_radius;
+                        ball.move_y = mouse_y + dy / distance * this.mouse_radius;
+                        if (ball.animater) ball.animater.kill();
+                        ball.animater = gsap.timeline()
+                            .to(ball, {
+                                attr: {
+                                    cx: ball.move_x,
+                                    cy: ball.move_y,
+                                },
+                                duration: 0.5,
+                                ease: "power3.out",
+                            })
+                            .to(ball.line, {
+                                attr: {
+                                    x2: ball.move_x,
+                                    y2: ball.move_y,
+                                },
+                                duration: 0.5,
+                                ease: "power3.out",
+                            }, "<")
+                            .to(ball, {
+                                attr: {
+                                    cx: ball.ori_x,
+                                    cy: ball.ori_y,
+                                },
+                                duration: 1,
+                                ease: "power3.out",
+                            }, "<0.1")
+                            .to(ball.line, {
+                                attr: {
+                                    x2: ball.ori_x,
+                                    y2: ball.ori_y,
+                                },
+                                duration: 1,
+                                ease: "power3.out",
+                            }, "<");
+                    }
+                });
+            }
+        };
+
+        // 技能条动画
+        const skills = {
+            init() {
+                // 创建观察器来检测技能条是否在视口中
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.animateSkills();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                // 观察技能容器
+                const skillsContainer = document.querySelector('.skills-container');
+                if (skillsContainer) {
+                    observer.observe(skillsContainer);
+                }
+            },
+            animateSkills() {
+                const skillProgresses = document.querySelectorAll('.skill-progress');
+                skillProgresses.forEach(progress => {
+                    const width = progress.getAttribute('data-width');
+                    gsap.to(progress, {
+                        width: `${width}%`,
+                        duration: 1.5,
+                        ease: "power2.out"
+                    });
+                });
+            }
+        };
+
+        // 平滑滚动
+        const lenis = new Lenis({
+            duration: 1,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            autoRaf: true,
+        });
+
+        // 水平滚动效果
+        const scrollbox = {
+            wapper: document.querySelector(".wapper"),
+            cardsbox: document.querySelector(".cardsbox"),
+            distance: 0,
+            if_leave: false,
+            init() {
+                this.resize();
+                window.addEventListener("resize", this.resize.bind(this));
+                this.create_scrolltrigger();
+            },
+            create_scrolltrigger() {
+                ScrollTrigger.create({
+                    trigger: this.wapper,
+                    start: "top top",
+                    end: "bottom bottom",
+                    onUpdate: (self) => {
+                        this.cardsbox.style.transform = `translateX(-${self.progress * this.distance}px)`;
+                    },
+                    onLeave: () => {
+                        this.if_leave = true;
+                    },
+                    onEnterBack: () => {
+                        this.if_leave = false;
+                    }
+                });
+            },
+            resize() {
+                this.distance = this.cardsbox.offsetWidth - innerWidth;
+                this.wapper.style.height = `${this.distance}px`;
+                if (this.if_leave) this.cardsbox.style.transform = `translateX(-${this.distance}px)`;
+            }
+        };
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            // 加载动画
+            setTimeout(() => {
+                loading.out();
+            }, 1500);
+            
+            // 初始化磁吸小球效果
+            magnetic.init();
+            
+            // 初始化水平滚动效果
+            scrollbox.init();
+            
+            // 初始化技能条
+            skills.init();
+            
+            // 初始化Lenis平滑滚动
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+            
+            // 导航链接平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        lenis.scrollTo(targetElement, {
+                            offset: -80, // 考虑导航栏高度
+                            duration: 1.5
+                        });
+                    }
+                });
+            });
+            
+            // 点击logo回到顶部
+            document.getElementById('pageLogo').addEventListener('click', () => {
+                lenis.scrollTo(0, {
+                    duration: 1.5
+                });
+            });
+        });
+    </script>
+</body>
+</html>
